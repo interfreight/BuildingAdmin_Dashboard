@@ -1279,8 +1279,8 @@ const departmentCodes = {
     Transport:"TRN",
     Forwarding:"FWD",
     IT:"IT",
-    Admin:"ADM"
-  BOD:"BOD"
+    Admin:"ADM",
+   BOD:"BOD",
  President:"Pres"
 
 };
@@ -1683,7 +1683,7 @@ table.innerHTML += `
 
 <img
 
-src="${asset.image_url || 'https://via.placeholder.com/50'}"
+src="${asset.image_url || 'https://placehold.co/50x50'}"
 
 class="asset-image">
 
@@ -2003,7 +2003,7 @@ document
 document
 .getElementById("imagePreview")
 .src=
-"https://via.placeholder.com/120";
+"https://placehold.co/120x120";
 
 
 
@@ -2071,7 +2071,7 @@ document.getElementById("quantity").value
 
 unit:
 document.getElementById("unit") 
-? document.getElementById("unit").value 
+? document.getElementById("unit").value,
 
 image_url:
 imageURL || currentImageURL,
@@ -2333,7 +2333,7 @@ document
 .getElementById("imagePreview")
 .src=
 currentImageURL ||
-"https://via.placeholder.com/120";
+"https://placehold.co/120x120";
 
 
 

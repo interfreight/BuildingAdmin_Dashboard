@@ -2031,47 +2031,33 @@ document.getElementById("assetNumber").value
 );
 
 
-
 let assetData={
-
 
 asset_number:
 document.getElementById("assetNumber").value,
 
-
 department:
 document.getElementById("department").value,
-
 
 asset_name:
 document.getElementById("assetName").value,
 
-
 category:
 document.getElementById("category").value,
-
 
 brand:
 document.getElementById("brand").value,
 
-
 model:
 document.getElementById("model").value,
 
-
 serial_number:
 document.getElementById("serialNumber").value,
-
 
 quantity:
 Number(
 document.getElementById("quantity").value
 ),
-
-
-unit:
-document.getElementById("unit") 
-? document.getElementById("unit").value,
 
 image_url:
 imageURL || currentImageURL,
@@ -2079,57 +2065,40 @@ imageURL || currentImageURL,
 purchase_date:
 document.getElementById("purchaseDate").value,
 
-
 supplier:
 document.getElementById("supplier").value,
-
 
 purchase_cost:
 document.getElementById("purchaseCost").value,
 
-
 invoice_number:
 document.getElementById("invoiceNumber").value,
-
 
 warranty_expiration:
 document.getElementById("warrantyExpiration").value,
 
-
 status:
 document.getElementById("status").value,
-
 
 assigned_employee_name:
 document.getElementById("assignedEmployee").value,
 
-
-
 location:
 document.getElementById("location").value,
-
 
 date_assigned:
 document.getElementById("dateAssigned").value,
 
-
-
 expected_return:
 document.getElementById("returnDate").value,
-
 
 description:
 document.getElementById("description").value,
 
-
 remarks:
 document.getElementById("remarks").value
 
-
 };
-
-
-
 
 
 const {error}=await supabaseClient

@@ -992,7 +992,7 @@ Add Asset
 
 <label>Unit</label>
 
-<input id="unit" value="Unit">
+<input id="unit" value="">
 
 
 </div>
@@ -1877,9 +1877,8 @@ document.getElementById("department").value;
 
 if(!dept){
 
-dept="HR";
-
-document.getElementById("department").value="HR";
+    alert("Please select a department first.");
+    return;
 
 }
 
@@ -1965,7 +1964,7 @@ const fields=[
 "returnDate",
 "description",
 "remarks"
-
+document.getElementById("department").value = "";
 
 ];
 

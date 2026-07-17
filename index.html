@@ -60,22 +60,16 @@ color:var(--text);
 /* ===========================
 SIDEBAR
 =========================== */
-.logo{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
+.logo-top{
 
-    width:65px;
-    height:65px;
+    width:120px;
+
+    height:70px;
 
     object-fit:contain;
 
-    background:white;
+    margin-bottom:15px;
 
-    padding:8px;
-
-    border-radius:8px;
 }
 
 .sidebar{
@@ -2847,11 +2841,20 @@ function generateQR(assetNumber){
                 src="${qrURL}"
                 id="qrImage"
             >
+<img
+    class="logo-top"
+    src="3. INTERFREIGHT COMPANY LOGO.png"
+>
 
-            <img
-                class="logo"
-                src="3. INTERFREIGHT COMPANY LOGO.png"
-            >
+<div class="qr-wrapper" id="qrContainer">
+
+    <img
+        class="qr"
+        src="${qrURL}"
+        id="qrImage"
+    >
+
+</div>
 
         </div>
 

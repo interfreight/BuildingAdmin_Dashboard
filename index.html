@@ -1871,29 +1871,9 @@ selectedAssetID=null;
 clearAssetForm();
 
 
-
-if(!dept){
-
-    alert("Please select a department first.");
-    return;
-
-}
-
-
-
-let number =
-await generateAssetNumber(dept);
-
-
-
-document.getElementById("assetNumber").value=number;
-
-
-
 document
 .getElementById("assetModal")
 .style.display="flex";
-
 
 
 document
@@ -1941,8 +1921,7 @@ document
 function clearAssetForm(){
 
 
-const fields=[
-
+const fields = [
 
 "assetNumber",
 "assetName",
@@ -1955,15 +1934,15 @@ const fields=[
 "invoiceNumber",
 "warrantyExpiration",
 "assignedEmployee",
-"assignedDepartment",
 "location",
 "dateAssigned",
 "returnDate",
 "description",
 "remarks"
-document.getElementById("department").value = "";
 
 ];
+
+document.getElementById("department").value = "";
 
 
 
@@ -2056,7 +2035,7 @@ document.getElementById("quantity").value
 ),
 
 image_url:
-imageURL
+imageURL,
 
 purchase_date:
 document.getElementById("purchaseDate").value,

@@ -1431,74 +1431,61 @@ document.getElementById("assetNumber").value=number;
  UPLOAD IMAGE TO SUPABASE STORAGE
 ********************************************/
 
-
 async function uploadAssetImage(assetNumber){
 
-
     const file =
-    document
-    .getElementById("assetImage")
-    .files[0];
-
-
+    document.getElementById("assetImage").files[0];
 
     if(!file){
 
-        return currentImageURL;
+        return currentImageURL || null;
 
     }
 
+    const ext =
+    file.name.split(".").pop();
 
+    const filename =
+    assetNumber +
+    "_" +
+    Date.now() +
+    "." +
+    ext;
 
-  const ext=file.name.split(".").pop();
-
-const filename =
-assetNumber+
-"_"+ 
-Date.now()+
-"."+
-ext;
-
-
-
-    const {error}=await supabaseClient
-
+    const { error } =
+    await supabaseClient
     .storage
-
-    .from("asset-images")
-
+    .from("inventory-assets")
     .upload(
         filename,
         file,
         {
-            upsert:true
+            upsert: true
         }
     );
-
-
 
     if(error){
 
         console.error(error);
 
+        alert(
+            "Image upload failed: " +
+            error.message
+        );
+
         return null;
 
     }
 
+    const publicURL =
+    supabaseClient
+    .storage
+    .from("inventory-assets")
+    .getPublicUrl(filename);
 
-
-  const publicURL =
-supabaseClient
-.storage
-.from("asset-images")
-.getPublicUrl(filename);
-
-
-return publicURL.data.publicUrl;
-
+    return publicURL.data.publicUrl;
 
 }
-
 
 
 
@@ -1999,11 +1986,20 @@ currentImageURL="";
 async function saveAsset(){
 
 
-
 let imageURL =
 await uploadAssetImage(
 document.getElementById("assetNumber").value
 );
+
+if(
+document.getElementById("assetImage").files.length > 0
+&&
+!imageURL
+){
+
+return;
+
+}
 
 
 let assetData={

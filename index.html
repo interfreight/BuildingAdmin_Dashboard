@@ -1486,94 +1486,74 @@ qrImage.src = "${qrURL}";
 
 logoImage.src = "3. INTERFREIGHT COMPANY LOGO.png";
 
-
 qrImage.onload = function(){
 
+    const canvas =
+        popup.document.getElementById("qrCanvas");
 
-    const canvas = document.getElementById("qrCanvas");
+    const ctx =
+        canvas.getContext("2d");
 
-    const ctx = canvas.getContext("2d");
 
-
-    // Draw QR code
+    // DRAW THE QR CODE FIRST
 
     ctx.drawImage(
-
         qrImage,
-
         0,
-
         0,
-
-        canvas.width,
-
-        canvas.height
-
+        500,
+        500
     );
 
 
+    // LOAD LOGO
+
+    const logoImage = new Image();
+
     logoImage.onload = function(){
 
+        // SMALL CENTER LOGO
 
-        // Logo size: approximately 18% of QR code
-
-        const logoSize = 90;
-
+        const logoSize = 70;
 
         const logoX =
-
-            (canvas.width - logoSize) / 2;
-
+            (500 - logoSize) / 2;
 
         const logoY =
-
-            (canvas.height - logoSize) / 2;
-
-
-        // White background behind logo
-
-        ctx.fillStyle = "white";
+            (500 - logoSize) / 2;
 
 
-        ctx.beginPath();
+        // WHITE BACKGROUND
+        // BEHIND THE CENTER LOGO
 
+        ctx.fillStyle = "#FFFFFF";
 
-        ctx.roundRect(
-
-            logoX - 12,
-
-            logoY - 12,
-
-            logoSize + 24,
-
-            logoSize + 24,
-
-            15
-
+        ctx.fillRect(
+            logoX - 10,
+            logoY - 10,
+            logoSize + 20,
+            logoSize + 20
         );
 
 
-        ctx.fill();
-
-
-        // Draw logo in the middle
+        // DRAW LOGO
+        // EXACT CENTER OF QR
 
         ctx.drawImage(
-
             logoImage,
-
             logoX,
-
             logoY,
-
             logoSize,
-
             logoSize
-
         );
 
-
     };
+
+
+    logoImage.crossOrigin = "anonymous";
+
+    logoImage.src =
+        "3. INTERFREIGHT COMPANY LOGO.png";
 
 };
 

@@ -2579,27 +2579,22 @@ function generateQR(assetNumber){
 
     const qrURL =
         "https://api.qrserver.com/v1/create-qr-code/" +
-        "?size=600x600" +
+        "?size=500x500" +
         "&ecc=H" +
         "&margin=2" +
-        "&qzone=2" +
         "&data=" +
         encodeURIComponent(assetNumber);
-
 
     const popup = window.open(
         "",
         "_blank",
-        "width=650,height=850"
+        "width=600,height=800"
     );
-
 
     popup.document.write(`
 
 <!DOCTYPE html>
-
 <html>
-
 <head>
 
 <title>Asset QR Code</title>
@@ -2626,7 +2621,7 @@ body{
 
 .qr-card{
 
-    width:600px;
+    width:500px;
 
     margin:auto;
 
@@ -2644,11 +2639,11 @@ body{
 
     color:#0B4F9F;
 
-    font-size:26px;
+    font-size:25px;
 
     font-weight:bold;
 
-    margin-bottom:25px;
+    margin-bottom:20px;
 
 }
 
@@ -2690,34 +2685,22 @@ body{
 
 </head>
 
-
 <body>
-
 
 <div class="qr-card" id="qrCard">
 
     <div class="asset-number">
-
         ${assetNumber}
-
     </div>
 
-
     <canvas
-
         id="qrCanvas"
-
         width="500"
-
         height="500">
-
     </canvas>
 
-
     <button
-
         class="save-btn"
-
         onclick="saveQR()">
 
         SAVE QR IMAGE
@@ -2726,23 +2709,15 @@ body{
 
 </div>
 
-
 <script>
 
 const qrImage = new Image();
 
 const logoImage = new Image();
 
-
 qrImage.crossOrigin = "anonymous";
 
 logoImage.crossOrigin = "anonymous";
-
-
-qrImage.src = "${qrURL}";
-
-logoImage.src = "3. INTERFREIGHT COMPANY LOGO.png";
-
 
 qrImage.onload = function(){
 
@@ -2752,85 +2727,51 @@ qrImage.onload = function(){
     const ctx =
         canvas.getContext("2d");
 
-
-    /*
-    DRAW QR CODE
-    */
-
     ctx.drawImage(
-
         qrImage,
-
         0,
-
         0,
-
         500,
-
         500
-
     );
-
 
     logoImage.onload = function(){
 
-        /*
-        CENTER LOGO
-        */
-
         const logoSize = 90;
-
 
         const logoX =
             (canvas.width - logoSize) / 2;
 
-
         const logoY =
             (canvas.height - logoSize) / 2;
 
-
-        /*
-        WHITE CENTER AREA
-        */
-
-        ctx.fillStyle = "white";
-
+        // WHITE CENTER AREA
+        ctx.fillStyle = "#FFFFFF";
 
         ctx.fillRect(
-
-            logoX - 15,
-
-            logoY - 15,
-
-            logoSize + 30,
-
-            logoSize + 30
-
+            logoX - 12,
+            logoY - 12,
+            logoSize + 24,
+            logoSize + 24
         );
 
-
-        /*
-        DRAW LOGO EXACTLY
-        IN THE CENTER
-        */
-
+        // CENTER LOGO
         ctx.drawImage(
-
             logoImage,
-
             logoX,
-
             logoY,
-
             logoSize,
-
             logoSize
-
         );
 
     };
 
+    logoImage.src =
+        "3. INTERFREIGHT COMPANY LOGO.png";
+
 };
+
+qrImage.src = "${qrURL}";
 
 
 function saveQR(){
@@ -2838,18 +2779,14 @@ function saveQR(){
     const canvas =
         document.getElementById("qrCanvas");
 
-
     const link =
         document.createElement("a");
-
 
     link.download =
         "${assetNumber}-QR.png";
 
-
     link.href =
         canvas.toDataURL("image/png");
-
 
     link.click();
 
@@ -2857,13 +2794,10 @@ function saveQR(){
 
 <\/script>
 
-
 </body>
-
 </html>
 
     `);
-
 
     popup.document.close();
 

@@ -1312,286 +1312,6 @@ reader.readAsDataURL(file);
 
 
 /********************************************
- AUTO GENERATE ASSET NUMBER
- FORMAT:
- INT-HR-0001
-********************************************/
-function generateQR(assetNumber){
-
-    const qrURL =
-        "https://api.qrserver.com/v1/create-qr-code/" +
-        "?size=600x600" +
-        "&ecc=H" +
-        "&margin=2" +
-        "&qzone=2" +
-        "&data=" +
-        encodeURIComponent(assetNumber);
-
-
-    const popup = window.open(
-        "",
-        "_blank",
-        "width=650,height=850"
-    );
-
-
-    popup.document.write(`
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>Asset QR Code</title>
-
-<style>
-
-*{
-    box-sizing:border-box;
-}
-
-body{
-
-    margin:0;
-
-    padding:30px;
-
-    background:#F5F7FB;
-
-    font-family:Arial,sans-serif;
-
-    text-align:center;
-
-}
-
-.qr-card{
-
-    width:600px;
-
-    margin:auto;
-
-    padding:30px;
-
-    background:white;
-
-    border-radius:18px;
-
-    box-shadow:0 8px 25px rgba(0,0,0,.15);
-
-}
-
-.asset-number{
-
-    color:#0B4F9F;
-
-    font-size:26px;
-
-    font-weight:bold;
-
-    margin-bottom:25px;
-
-}
-
-#qrCanvas{
-
-    display:block;
-
-    width:500px;
-
-    height:500px;
-
-    margin:0 auto;
-
-}
-
-.save-btn{
-
-    margin-top:25px;
-
-    padding:14px 25px;
-
-    border:none;
-
-    border-radius:8px;
-
-    background:#0B4F9F;
-
-    color:white;
-
-    font-size:15px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-.save-btn:hover{
-
-    background:#083B77;
-
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<div class="qr-card" id="qrCard">
-
-
-    <div class="asset-number">
-
-        ${assetNumber}
-
-    </div>
-
-
-    <canvas id="qrCanvas" width="500" height="500"></canvas>
-
-
-    <button
-
-        class="save-btn"
-
-        onclick="saveQR()"
-
-    >
-
-        SAVE QR IMAGE
-
-    </button>
-
-
-</div>
-
-
-<script>
-
-const qrImage = new Image();
-
-const logoImage = new Image();
-
-
-qrImage.crossOrigin = "anonymous";
-
-logoImage.crossOrigin = "anonymous";
-
-
-qrImage.src = "${qrURL}";
-
-logoImage.src = "3. INTERFREIGHT COMPANY LOGO.png";
-
-qrImage.onload = function(){
-
-    const canvas =
-        popup.document.getElementById("qrCanvas");
-
-    const ctx =
-        canvas.getContext("2d");
-
-
-    // DRAW THE QR CODE FIRST
-
-    ctx.drawImage(
-        qrImage,
-        0,
-        0,
-        500,
-        500
-    );
-
-
-    // LOAD LOGO
-
-    const logoImage = new Image();
-
-    logoImage.onload = function(){
-
-        // SMALL CENTER LOGO
-
-        const logoSize = 70;
-
-        const logoX =
-            (500 - logoSize) / 2;
-
-        const logoY =
-            (500 - logoSize) / 2;
-
-
-        // WHITE BACKGROUND
-        // BEHIND THE CENTER LOGO
-
-        ctx.fillStyle = "#FFFFFF";
-
-        ctx.fillRect(
-            logoX - 10,
-            logoY - 10,
-            logoSize + 20,
-            logoSize + 20
-        );
-
-
-        // DRAW LOGO
-        // EXACT CENTER OF QR
-
-        ctx.drawImage(
-            logoImage,
-            logoX,
-            logoY,
-            logoSize,
-            logoSize
-        );
-
-    };
-
-
-    logoImage.crossOrigin = "anonymous";
-
-    logoImage.src =
-        "3. INTERFREIGHT COMPANY LOGO.png";
-
-};
-
-
-function saveQR(){
-
-
-    const canvas = document.getElementById("qrCanvas");
-
-
-    const link = document.createElement("a");
-
-
-    link.download = "${assetNumber}-QR.png";
-
-
-    link.href = canvas.toDataURL("image/png");
-
-
-    link.click();
-
-
-}
-
-<\/script>
-
-
-</body>
-
-</html>
-
-    `);
-
-
-    popup.document.close();
-
-}
-/********************************************
  DEPARTMENT CHANGE
 ********************************************/
 
@@ -2855,20 +2575,22 @@ show ? "" : "none";
 }/********************************************
  QR GENERATOR
 ********************************************/
-
 function generateQR(assetNumber){
 
-    let qrURL =
-    "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data="
-    +
-    encodeURIComponent(assetNumber);
+    const qrURL =
+        "https://api.qrserver.com/v1/create-qr-code/" +
+        "?size=600x600" +
+        "&ecc=H" +
+        "&margin=2" +
+        "&qzone=2" +
+        "&data=" +
+        encodeURIComponent(assetNumber);
 
 
-    let popup =
-    window.open(
+    const popup = window.open(
         "",
         "_blank",
-        "width=600,height=800"
+        "width=650,height=850"
     );
 
 
@@ -2885,11 +2607,8 @@ function generateQR(assetNumber){
 <style>
 
 *{
-
     box-sizing:border-box;
-
 }
-
 
 body{
 
@@ -2905,10 +2624,9 @@ body{
 
 }
 
-
 .qr-card{
 
-    width:500px;
+    width:600px;
 
     margin:auto;
 
@@ -2922,45 +2640,29 @@ body{
 
 }
 
-
 .asset-number{
 
     color:#0B4F9F;
 
-    font-size:25px;
+    font-size:26px;
 
     font-weight:bold;
 
-    margin-bottom:20px;
+    margin-bottom:25px;
 
 }
 
-
-.logo{
-
-    width:180px;
-
-    max-height:90px;
-
-    object-fit:contain;
-
-    margin-bottom:20px;
-
-}
-
-
-.qr-code{
+#qrCanvas{
 
     display:block;
 
-    width:400px;
+    width:500px;
 
-    height:400px;
+    height:500px;
 
     margin:0 auto;
 
 }
-
 
 .save-btn{
 
@@ -2984,14 +2686,6 @@ body{
 
 }
 
-
-.save-btn:hover{
-
-    background:#083B77;
-
-}
-
-
 </style>
 
 </head>
@@ -3002,7 +2696,6 @@ body{
 
 <div class="qr-card" id="qrCard">
 
-
     <div class="asset-number">
 
         ${assetNumber}
@@ -3010,90 +2703,155 @@ body{
     </div>
 
 
-    <img
+    <canvas
 
-        class="logo"
+        id="qrCanvas"
 
-        src="3. INTERFREIGHT COMPANY LOGO.png"
+        width="500"
 
-    >
+        height="500">
 
-
-    <img
-
-        class="qr-code"
-
-        src="${qrURL}"
-
-    >
+    </canvas>
 
 
     <button
 
         class="save-btn"
 
-        onclick="saveQR()"
-
-    >
+        onclick="saveQR()">
 
         SAVE QR IMAGE
 
     </button>
 
-
 </div>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
 
 
 <script>
 
+const qrImage = new Image();
+
+const logoImage = new Image();
+
+
+qrImage.crossOrigin = "anonymous";
+
+logoImage.crossOrigin = "anonymous";
+
+
+qrImage.src = "${qrURL}";
+
+logoImage.src = "3. INTERFREIGHT COMPANY LOGO.png";
+
+
+qrImage.onload = function(){
+
+    const canvas =
+        document.getElementById("qrCanvas");
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    /*
+    DRAW QR CODE
+    */
+
+    ctx.drawImage(
+
+        qrImage,
+
+        0,
+
+        0,
+
+        500,
+
+        500
+
+    );
+
+
+    logoImage.onload = function(){
+
+        /*
+        CENTER LOGO
+        */
+
+        const logoSize = 90;
+
+
+        const logoX =
+            (canvas.width - logoSize) / 2;
+
+
+        const logoY =
+            (canvas.height - logoSize) / 2;
+
+
+        /*
+        WHITE CENTER AREA
+        */
+
+        ctx.fillStyle = "white";
+
+
+        ctx.fillRect(
+
+            logoX - 15,
+
+            logoY - 15,
+
+            logoSize + 30,
+
+            logoSize + 30
+
+        );
+
+
+        /*
+        DRAW LOGO EXACTLY
+        IN THE CENTER
+        */
+
+        ctx.drawImage(
+
+            logoImage,
+
+            logoX,
+
+            logoY,
+
+            logoSize,
+
+            logoSize
+
+        );
+
+    };
+
+};
+
+
 function saveQR(){
 
-
-    const card =
-
-    document.getElementById("qrCard");
+    const canvas =
+        document.getElementById("qrCanvas");
 
 
-    html2canvas(
-
-        card,
-
-        {
-
-            scale:2,
-
-            backgroundColor:"#ffffff",
-
-            useCORS:true
-
-        }
-
-    ).then(function(canvas){
-
-
-        const link =
-
+    const link =
         document.createElement("a");
 
 
-        link.download =
-
+    link.download =
         "${assetNumber}-QR.png";
 
 
-        link.href =
-
+    link.href =
         canvas.toDataURL("image/png");
 
 
-        link.click();
-
-
-    });
-
+    link.click();
 
 }
 

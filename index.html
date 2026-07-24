@@ -1318,78 +1318,285 @@ reader.readAsDataURL(file);
 ********************************************/
 
 
-async function generateAssetNumber(department){
+function generateQR(assetNumber){
+
+    let qrURL =
+    "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data="
+    +
+    encodeURIComponent(assetNumber);
 
 
-    if(!department){
-
-        return "";
-
-    }
-
-
-
-    const code = departmentCodes[department];
+    let popup =
+    window.open(
+        "",
+        "_blank",
+        "width=600,height=750"
+    );
 
 
+    popup.document.write(`
 
-    const {data,error}=await supabaseClient
+<!DOCTYPE html>
 
-    .from("inventory_assets")
+<html>
 
-    .select("asset_number")
+<head>
 
-    .eq("department",department)
-
- .order(
-"created_at",
-{
-ascending:false
-}
-)
-.limit(1);
+<title>Asset QR Code</title>
 
 
+<style>
 
-    if(error){
+*{
 
-        console.error(error);
-
-        return "";
-
-    }
-
-
-
-    let nextNumber = 1;
-
-
-
-if(data && data.length > 0 && data[0].asset_number){
-
-
-        let last =
-        data[0]
-        .asset_number
-        .split("-")
-        .pop();
-
-
-
-        nextNumber =
-        parseInt(last)+1;
-
-
-    }
-
-
-
-    return `INT-${code}-${String(nextNumber).padStart(4,"0")}`;
-
+    box-sizing:border-box;
 
 }
 
 
+body{
+
+    margin:0;
+
+    padding:30px;
+
+    background:#F5F7FB;
+
+    font-family:Arial,sans-serif;
+
+    text-align:center;
+
+}
+
+
+.qr-card{
+
+    width:560px;
+
+    margin:auto;
+
+    padding:30px;
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+
+}
+
+
+.asset-number{
+
+    color:#0B4F9F;
+
+    font-size:25px;
+
+    font-weight:bold;
+
+    margin-bottom:20px;
+
+}
+
+
+.qr-wrapper{
+
+    position:relative;
+
+    width:500px;
+
+    height:500px;
+
+    margin:auto;
+
+}
+
+
+.qr-code{
+
+    width:500px;
+
+    height:500px;
+
+    display:block;
+
+}
+
+
+.logo-center{
+
+    position:absolute;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:85px;
+
+    height:85px;
+
+    object-fit:contain;
+
+    background:white;
+
+    padding:10px;
+
+    border-radius:8px;
+
+}
+
+
+.save-btn{
+
+    margin-top:25px;
+
+    padding:14px 25px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#0B4F9F;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+.save-btn:hover{
+
+    background:#083B77;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="qr-card" id="qrCard">
+
+
+    <div class="asset-number">
+
+        ${assetNumber}
+
+    </div>
+
+
+    <div class="qr-wrapper" id="qrWrapper">
+
+
+        <img
+
+            class="qr-code"
+
+            src="${qrURL}"
+
+        >
+
+
+        <img
+
+            class="logo-center"
+
+            src="3. INTERFREIGHT COMPANY LOGO.png"
+
+        >
+
+
+    </div>
+
+
+    <button
+
+        class="save-btn"
+
+        onclick="saveQR()"
+
+    >
+
+        SAVE QR IMAGE
+
+    </button>
+
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
+
+
+<script>
+
+function saveQR(){
+
+
+    html2canvas(
+
+        document.getElementById("qrCard"),
+
+        {
+
+            scale:2,
+
+            backgroundColor:"#ffffff",
+
+            useCORS:true
+
+        }
+
+    ).then(function(canvas){
+
+
+        const link =
+
+        document.createElement("a");
+
+
+        link.download =
+
+        "${assetNumber}-QR.png";
+
+
+        link.href =
+
+        canvas.toDataURL("image/png");
+
+
+        link.click();
+
+
+    });
+
+
+}
+
+<\/script>
+
+
+</body>
+
+</html>
+
+    `);
+
+
+    popup.document.close();
+
+}
 
 /********************************************
  DEPARTMENT CHANGE

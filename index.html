@@ -1316,20 +1316,22 @@ reader.readAsDataURL(file);
  FORMAT:
  INT-HR-0001
 ********************************************/
-
 function generateQR(assetNumber){
 
-    let qrURL =
-    "https://api.qrserver.com/v1/create-qr-code/?size=600x600&data="
-    +
-    encodeURIComponent(assetNumber);
+    const qrURL =
+        "https://api.qrserver.com/v1/create-qr-code/" +
+        "?size=600x600" +
+        "&ecc=H" +
+        "&margin=2" +
+        "&qzone=2" +
+        "&data=" +
+        encodeURIComponent(assetNumber);
 
 
-    let popup =
-    window.open(
+    const popup = window.open(
         "",
         "_blank",
-        "width=650,height=800"
+        "width=650,height=850"
     );
 
 
@@ -1343,15 +1345,11 @@ function generateQR(assetNumber){
 
 <title>Asset QR Code</title>
 
-
 <style>
 
 *{
-
     box-sizing:border-box;
-
 }
-
 
 body{
 
@@ -1367,10 +1365,9 @@ body{
 
 }
 
-
 .qr-card{
 
-    width:560px;
+    width:600px;
 
     margin:auto;
 
@@ -1384,12 +1381,11 @@ body{
 
 }
 
-
 .asset-number{
 
     color:#0B4F9F;
 
-    font-size:25px;
+    font-size:26px;
 
     font-weight:bold;
 
@@ -1397,76 +1393,23 @@ body{
 
 }
 
-
-.qr-container{
-
-    position:relative;
-
-    width:500px;
-
-    height:500px;
-
-    margin:auto;
-
-}
-
-
-.qr-code{
-
-    width:500px;
-
-    height:500px;
+#qrCanvas{
 
     display:block;
 
-}
+    width:500px;
 
+    height:500px;
 
-.logo-box{
-
-    position:absolute;
-
-    top:50%;
-
-    left:50%;
-
-    transform:translate(-50%,-50%);
-
-    width:105px;
-
-    height:105px;
-
-    background:white;
-
-    border-radius:12px;
-
-    padding:15px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
+    margin:0 auto;
 
 }
-
-
-.logo-box img{
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:contain;
-
-}
-
 
 .save-btn{
 
-    margin-top:30px;
+    margin-top:25px;
 
-    padding:14px 28px;
+    padding:14px 25px;
 
     border:none;
 
@@ -1484,13 +1427,11 @@ body{
 
 }
 
-
 .save-btn:hover{
 
     background:#083B77;
 
 }
-
 
 </style>
 
@@ -1510,32 +1451,7 @@ body{
     </div>
 
 
-    <div class="qr-container">
-
-
-        <img
-
-            class="qr-code"
-
-            src="${qrURL}"
-
-        >
-
-
-        <div class="logo-box">
-
-
-            <img
-
-                src="3. INTERFREIGHT COMPANY LOGO.png"
-
-            >
-
-
-        </div>
-
-
-    </div>
+    <canvas id="qrCanvas" width="500" height="500"></canvas>
 
 
     <button
@@ -1554,55 +1470,130 @@ body{
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
-
-
 <script>
+
+const qrImage = new Image();
+
+const logoImage = new Image();
+
+
+qrImage.crossOrigin = "anonymous";
+
+logoImage.crossOrigin = "anonymous";
+
+
+qrImage.src = "${qrURL}";
+
+logoImage.src = "3. INTERFREIGHT COMPANY LOGO.png";
+
+
+qrImage.onload = function(){
+
+
+    const canvas = document.getElementById("qrCanvas");
+
+    const ctx = canvas.getContext("2d");
+
+
+    // Draw QR code
+
+    ctx.drawImage(
+
+        qrImage,
+
+        0,
+
+        0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+
+    logoImage.onload = function(){
+
+
+        // Logo size: approximately 18% of QR code
+
+        const logoSize = 90;
+
+
+        const logoX =
+
+            (canvas.width - logoSize) / 2;
+
+
+        const logoY =
+
+            (canvas.height - logoSize) / 2;
+
+
+        // White background behind logo
+
+        ctx.fillStyle = "white";
+
+
+        ctx.beginPath();
+
+
+        ctx.roundRect(
+
+            logoX - 12,
+
+            logoY - 12,
+
+            logoSize + 24,
+
+            logoSize + 24,
+
+            15
+
+        );
+
+
+        ctx.fill();
+
+
+        // Draw logo in the middle
+
+        ctx.drawImage(
+
+            logoImage,
+
+            logoX,
+
+            logoY,
+
+            logoSize,
+
+            logoSize
+
+        );
+
+
+    };
+
+};
+
 
 function saveQR(){
 
 
-    const qrCard =
-
-    document.getElementById("qrCard");
+    const canvas = document.getElementById("qrCanvas");
 
 
-    html2canvas(
-
-        qrCard,
-
-        {
-
-            scale:2,
-
-            backgroundColor:"#ffffff",
-
-            useCORS:true
-
-        }
-
-    ).then(function(canvas){
+    const link = document.createElement("a");
 
 
-        const link =
-
-        document.createElement("a");
+    link.download = "${assetNumber}-QR.png";
 
 
-        link.download =
-
-        "${assetNumber}-QR.png";
+    link.href = canvas.toDataURL("image/png");
 
 
-        link.href =
-
-        canvas.toDataURL("image/png");
-
-
-        link.click();
-
-
-    });
+    link.click();
 
 
 }

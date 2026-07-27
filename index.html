@@ -1272,7 +1272,89 @@ const departmentCodes = {
  President:"Pres"
 
 };
+/********************************************
+ AUTO GENERATE ASSET NUMBER
+ FORMAT:
+ INT-HR-0001
+********************************************/
 
+async function generateAssetNumber(department){
+
+    if(!department){
+
+        return "";
+
+    }
+
+
+    const code =
+        departmentCodes[department] ||
+        department.substring(0,3).toUpperCase();
+
+
+    const { data, error } =
+        await supabaseClient
+
+        .from("inventory_assets")
+
+        .select("asset_number")
+
+        .eq("department", department)
+
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        )
+
+        .limit(1);
+
+
+    if(error){
+
+        console.error(
+            "Asset number generation error:",
+            error
+        );
+
+        return `INT-${code}-0001`;
+
+    }
+
+
+    let nextNumber = 1;
+
+
+    if(data && data.length > 0){
+
+        const lastAssetNumber =
+            data[0].asset_number;
+
+
+        const parts =
+            lastAssetNumber.split("-");
+
+
+        const lastNumber =
+            parseInt(
+                parts[parts.length - 1]
+            );
+
+
+        if(!isNaN(lastNumber)){
+
+            nextNumber =
+                lastNumber + 1;
+
+        }
+
+    }
+
+
+    return `INT-${code}-${String(nextNumber).padStart(4,"0")}`;
+
+}
 
 
 /********************************************

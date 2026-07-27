@@ -2663,13 +2663,9 @@ async function generateQR(assetNumber){
 
     const { data: asset, error } =
         await supabaseClient
-
         .from("inventory_assets")
-
         .select("*")
-
         .eq("asset_number", assetNumber)
-
         .single();
 
 
@@ -2687,7 +2683,7 @@ async function generateQR(assetNumber){
     }
 
 
-    // IMPORTANT DETAILS ONLY
+    // IMPORTANT ASSET DETAILS
 
     const qrData =
 
@@ -2716,11 +2712,11 @@ Location: ${asset.location || "-"}`;
 
         "https://api.qrserver.com/v1/create-qr-code/" +
 
-        "?size=500x500" +
+        "?size=1000x1000" +
 
         "&ecc=H" +
 
-        "&margin=2" +
+        "&margin=4" +
 
         "&data=" +
 
@@ -2728,13 +2724,9 @@ Location: ${asset.location || "-"}`;
 
 
     const popup = window.open(
-
         "",
-
         "_blank",
-
-        "width=600,height=800"
-
+        "width=700,height=900"
     );
 
 
@@ -2751,9 +2743,7 @@ Location: ${asset.location || "-"}`;
 <style>
 
 *{
-
     box-sizing:border-box;
-
 }
 
 body{
@@ -2772,7 +2762,7 @@ body{
 
 .qr-card{
 
-    width:500px;
+    width:600px;
 
     margin:auto;
 
@@ -2790,13 +2780,37 @@ body{
 
     color:#0B4F9F;
 
-    font-size:25px;
+    font-size:28px;
 
     font-weight:bold;
 
-    margin-bottom:20px;
+    margin-bottom:25px;
 
 }
+
+
+/* QR DISPLAY AREA */
+
+.qr-wrapper{
+
+    width:500px;
+
+    height:500px;
+
+    margin:0 auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    overflow:hidden;
+
+    background:white;
+
+}
+
 
 #qrCanvas{
 
@@ -2806,9 +2820,8 @@ body{
 
     height:500px;
 
-    margin:0 auto;
-
 }
+
 
 .save-btn{
 
@@ -2832,13 +2845,22 @@ body{
 
 }
 
+.save-btn:hover{
+
+    background:#083B77;
+
+}
+
 </style>
 
 </head>
 
+
 <body>
 
+
 <div class="qr-card" id="qrCard">
+
 
     <div class="asset-number">
 
@@ -2846,15 +2868,21 @@ body{
 
     </div>
 
-    <canvas
 
-        id="qrCanvas"
+    <div class="qr-wrapper">
 
-        width="500"
+        <canvas
 
-        height="500">
+            id="qrCanvas"
 
-    </canvas>
+            width="500"
+
+            height="500">
+
+        </canvas>
+
+    </div>
+
 
     <button
 
@@ -2865,6 +2893,7 @@ body{
         SAVE QR IMAGE
 
     </button>
+
 
 </div>
 
@@ -2884,14 +2913,26 @@ logoImage.crossOrigin = "anonymous";
 qrImage.onload = function(){
 
     const canvas =
-
         document.getElementById("qrCanvas");
 
 
     const ctx =
-
         canvas.getContext("2d");
 
+
+    // WHITE BACKGROUND
+
+    ctx.fillStyle = "#FFFFFF";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    // DRAW QR PERFECTLY INSIDE CANVAS
 
     ctx.drawImage(
 
@@ -2901,14 +2942,15 @@ qrImage.onload = function(){
 
         0,
 
-        500,
+        canvas.width,
 
-        500
+        canvas.height
 
     );
 
 
     logoImage.onload = function(){
+
 
         const logoSize = 90;
 
@@ -2923,21 +2965,25 @@ qrImage.onload = function(){
             (canvas.height - logoSize) / 2;
 
 
+        // WHITE CENTER AREA
+
         ctx.fillStyle = "#FFFFFF";
 
 
         ctx.fillRect(
 
-            logoX - 12,
+            logoX - 15,
 
-            logoY - 12,
+            logoY - 15,
 
-            logoSize + 24,
+            logoSize + 30,
 
-            logoSize + 24
+            logoSize + 30
 
         );
 
+
+        // CENTER LOGO
 
         ctx.drawImage(
 
@@ -2953,12 +2999,13 @@ qrImage.onload = function(){
 
         );
 
+
     };
 
 
     logoImage.src =
-
         "3. INTERFREIGHT COMPANY LOGO.png";
+
 
 };
 
@@ -2967,6 +3014,7 @@ qrImage.src = "${qrURL}";
 
 
 function saveQR(){
+
 
     const card =
 
@@ -2987,7 +3035,11 @@ function saveQR(){
 
         }
 
-    ).then(function(canvas){
+    )
+
+
+    .then(function(canvas){
+
 
         const link =
 
@@ -3006,11 +3058,14 @@ function saveQR(){
 
         link.click();
 
+
     });
+
 
 }
 
 <\/script>
+
 
 </body>
 

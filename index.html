@@ -2667,16 +2667,20 @@ function generateQR(assetNumber){
         "&data=" +
         encodeURIComponent(assetNumber);
 
+
     const popup = window.open(
         "",
         "_blank",
         "width=600,height=800"
     );
 
+
     popup.document.write(`
 
 <!DOCTYPE html>
+
 <html>
+
 <head>
 
 <title>Asset QR Code</title>
@@ -2703,7 +2707,7 @@ body{
 
 .qr-card{
 
-    width:500px;
+    width:560px;
 
     margin:auto;
 
@@ -2767,22 +2771,34 @@ body{
 
 </head>
 
+
 <body>
 
-<div class="qr-card" id="qrCard">
+
+<div class="qr-card">
 
     <div class="asset-number">
+
         ${assetNumber}
+
     </div>
 
+
     <canvas
+
         id="qrCanvas"
+
         width="500"
+
         height="500">
+
     </canvas>
 
+
     <button
+
         class="save-btn"
+
         onclick="saveQR()">
 
         SAVE QR IMAGE
@@ -2790,106 +2806,287 @@ body{
     </button>
 
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
+
+
 <script>
+
 
 const qrImage = new Image();
 
 const logoImage = new Image();
 
+
 qrImage.crossOrigin = "anonymous";
 
 logoImage.crossOrigin = "anonymous";
 
+
 qrImage.onload = function(){
+
 
     const canvas =
         document.getElementById("qrCanvas");
 
+
     const ctx =
         canvas.getContext("2d");
 
+
+    /*
+    DRAW QR CODE
+    */
+
     ctx.drawImage(
+
         qrImage,
+
         0,
+
         0,
-        500,
-        500
+
+        canvas.width,
+
+        canvas.height
+
     );
+
 
     logoImage.onload = function(){
 
+
+        /*
+        LOGO SIZE
+        */
+
         const logoSize = 90;
 
+
+        /*
+        EXACT CENTER OF CANVAS
+        */
+
+        const centerX =
+            canvas.width / 2;
+
+
+        const centerY =
+            canvas.height / 2;
+
+
         const logoX =
-            (canvas.width - logoSize) / 2;
+            centerX - logoSize / 2;
+
 
         const logoY =
-            (canvas.height - logoSize) / 2;
+            centerY - logoSize / 2;
 
-        // WHITE CENTER AREA
-        ctx.fillStyle = "#FFFFFF";
+
+        /*
+        CENTER WHITE BACKGROUND
+        */
+
+        const whitePadding = 12;
+
+
+        const whiteSize =
+            logoSize + whitePadding * 2;
+
+
+        const whiteX =
+            centerX - whiteSize / 2;
+
+
+        const whiteY =
+            centerY - whiteSize / 2;
+
+
+        ctx.fillStyle =
+            "#FFFFFF";
+
 
         ctx.fillRect(
-            logoX - 12,
-            logoY - 12,
-            logoSize + 24,
-            logoSize + 24
+
+            whiteX,
+
+            whiteY,
+
+            whiteSize,
+
+            whiteSize
+
         );
 
-        // CENTER LOGO
+
+        /*
+        DRAW LOGO EXACTLY CENTERED
+        */
+
         ctx.drawImage(
+
             logoImage,
+
             logoX,
+
             logoY,
+
             logoSize,
+
             logoSize
+
         );
+
 
     };
+
 
     logoImage.src =
         "3. INTERFREIGHT COMPANY LOGO.png";
 
+
 };
 
-qrImage.src = "${qrURL}";
+
+qrImage.src =
+    "${qrURL}";
+
 
 
 function saveQR(){
 
-    const card =
-        document.getElementById("qrCard");
 
-    html2canvas(
-        card,
-        {
-            scale: 2,
-            backgroundColor: "#ffffff",
-            useCORS: true
-        }
-    ).then(function(canvas){
+    const qrCanvas =
+        document.getElementById("qrCanvas");
 
-        const link =
-            document.createElement("a");
 
-        link.download =
-            "${assetNumber}-QR.png";
+    /*
+    CREATE FINAL DOWNLOAD CANVAS
+    */
 
-        link.href =
-            canvas.toDataURL("image/png");
+    const finalCanvas =
+        document.createElement("canvas");
 
-        link.click();
 
-    });
+    const ctx =
+        finalCanvas.getContext("2d");
+
+
+    const padding = 40;
+
+    const titleHeight = 70;
+
+
+    finalCanvas.width =
+        500 + padding * 2;
+
+
+    finalCanvas.height =
+        500 +
+        titleHeight +
+        padding * 2;
+
+
+    /*
+    WHITE BACKGROUND
+    */
+
+    ctx.fillStyle =
+        "#FFFFFF";
+
+
+    ctx.fillRect(
+
+        0,
+
+        0,
+
+        finalCanvas.width,
+
+        finalCanvas.height
+
+    );
+
+
+    /*
+    ASSET NUMBER
+    */
+
+    ctx.fillStyle =
+        "#0B4F9F";
+
+
+    ctx.font =
+        "bold 30px Arial";
+
+
+    ctx.textAlign =
+        "center";
+
+
+    ctx.textBaseline =
+        "middle";
+
+
+    ctx.fillText(
+
+        "${assetNumber}",
+
+        finalCanvas.width / 2,
+
+        padding + titleHeight / 2
+
+    );
+
+
+    /*
+    QR CODE
+    */
+
+    ctx.drawImage(
+
+        qrCanvas,
+
+        padding,
+
+        padding + titleHeight,
+
+        500,
+
+        500
+
+    );
+
+
+    /*
+    DOWNLOAD COMPLETE IMAGE
+    */
+
+    const link =
+        document.createElement("a");
+
+
+    link.download =
+        "${assetNumber}-QR.png";
+
+
+    link.href =
+        finalCanvas.toDataURL("image/png");
+
+
+    link.click();
+
 
 }
+
+
 <\/script>
 
+
 </body>
+
 </html>
 
     `);
+
 
     popup.document.close();
 

@@ -2708,7 +2708,7 @@ body{
     </button>
 
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
 <script>
 
 const qrImage = new Image();
@@ -2776,22 +2776,32 @@ qrImage.src = "${qrURL}";
 
 function saveQR(){
 
-    const canvas =
-        document.getElementById("qrCanvas");
+    const card =
+        document.getElementById("qrCard");
 
-    const link =
-        document.createElement("a");
+    html2canvas(
+        card,
+        {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            useCORS: true
+        }
+    ).then(function(canvas){
 
-    link.download =
-        "${assetNumber}-QR.png";
+        const link =
+            document.createElement("a");
 
-    link.href =
-        canvas.toDataURL("image/png");
+        link.download =
+            "${assetNumber}-QR.png";
 
-    link.click();
+        link.href =
+            canvas.toDataURL("image/png");
+
+        link.click();
+
+    });
 
 }
-
 <\/script>
 
 </body>

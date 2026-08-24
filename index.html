@@ -2853,6 +2853,8 @@ body{
 
 </style>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 
 
@@ -3015,52 +3017,63 @@ qrImage.src = "${qrURL}";
 
 function saveQR(){
 
+    const card = document.getElementById("qrCard");
 
-    const card =
+    if(!card){
+        alert("QR card not found.");
+        return;
+    }
 
-        document.getElementById("qrCard");
+    if(typeof html2canvas === "undefined"){
+        alert("Image saving library failed to load. Please refresh the QR window.");
+        return;
+    }
 
+    html2canvas(card, {
+        scale: 3,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        allowTaint: false,
+        logging: false
+    })
+    .then(function(canvas){
 
-    html2canvas(
+        try {
 
-        card,
+            const image = canvas.toDataURL("image/png");
 
-        {
+            const link = document.createElement("a");
 
-            scale:2,
+            link.download = "${assetNumber}-QR.png";
 
-            backgroundColor:"#ffffff",
+            link.href = image;
 
-            useCORS:true
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+
+        } catch(error){
+
+            console.error("QR image save error:", error);
+
+            alert(
+                "Unable to save QR image. Please check the browser console."
+            );
 
         }
 
-    )
+    })
+    .catch(function(error){
 
+        console.error("html2canvas error:", error);
 
-    .then(function(canvas){
-
-
-        const link =
-
-            document.createElement("a");
-
-
-        link.download =
-
-            "${assetNumber}-QR.png";
-
-
-        link.href =
-
-            canvas.toDataURL("image/png");
-
-
-        link.click();
-
+        alert(
+            "Failed to create QR image. Please make sure the QR and logo are fully loaded."
+        );
 
     });
-
 
 }
 

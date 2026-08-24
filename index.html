@@ -2659,8 +2659,48 @@ show ? "" : "none";
 ********************************************/
 async function generateQR(assetNumber){
 
-    // GET COMPLETE ASSET DETAILS FROM SUPABASE
+    // OPEN POPUP IMMEDIATELY
+    // This prevents Chrome from blocking the popup
+    const popup = window.open(
+        "",
+        "_blank",
+        "width=700,height=900"
+    );
 
+    if(!popup){
+
+        alert(
+            "QR popup was blocked. Please allow popups for this website."
+        );
+
+        return;
+    }
+
+    // SHOW LOADING MESSAGE
+    popup.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Loading QR Code...</title>
+        </head>
+
+        <body style="
+            font-family:Arial;
+            text-align:center;
+            padding:50px;
+        ">
+
+            <h2>Loading QR Code...</h2>
+            <p>Please wait...</p>
+
+        </body>
+        </html>
+    `);
+
+    popup.document.close();
+
+
+    // GET COMPLETE ASSET DETAILS FROM SUPABASE
     const { data: asset, error } =
         await supabaseClient
         .from("inventory_assets")
@@ -2673,15 +2713,15 @@ async function generateQR(assetNumber){
 
         console.error(error);
 
+        popup.close();
+
         alert(
             "Cannot load asset details: " +
             error.message
         );
 
         return;
-
     }
-
 
     // IMPORTANT ASSET DETAILS
 
@@ -2721,13 +2761,6 @@ Location: ${asset.location || "-"}`;
         "&data=" +
 
         encodeURIComponent(qrData);
-
-
-    const popup = window.open(
-        "",
-        "_blank",
-        "width=700,height=900"
-    );
 
 
     popup.document.write(`
@@ -2853,7 +2886,7 @@ body{
 
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
 
 </head>
 

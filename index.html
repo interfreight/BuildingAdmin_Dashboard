@@ -1242,7 +1242,11 @@ CLOSE
 
 </div>
 <!-- SUPABASE LIBRARY -->
+<!-- SUPABASE LIBRARY -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- SHEETJS EXCEL LIBRARY -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <script>
@@ -3215,24 +3219,42 @@ modal.style.display="none";
 
 
 };
-
 /********************************************
  EXPORT INVENTORY TO EXCEL
 ********************************************/
 
-document
-.getElementById("exportExcelBtn")
-.addEventListener(
-    "click",
-    exportInventoryToExcel
-);
+const exportExcelButton =
+    document.getElementById("exportExcelBtn");
+
+
+if(exportExcelButton){
+
+    exportExcelButton.addEventListener(
+        "click",
+        exportInventoryToExcel
+    );
+
+}
 
 
 function exportInventoryToExcel(){
 
-    if(!inventoryData || inventoryData.length === 0){
+    console.log("Export Excel button clicked");
 
-        alert("There are no inventory records to export.");
+
+    /*
+     * CHECK XLSX LIBRARY
+     */
+
+    if(typeof XLSX === "undefined"){
+
+        alert(
+            "Excel export library failed to load. Please refresh the page and try again."
+        );
+
+        console.error(
+            "XLSX library is not loaded."
+        );
 
         return;
 
@@ -3240,7 +3262,26 @@ function exportInventoryToExcel(){
 
 
     /*
-     * GET CURRENT FILTER VALUES
+     * CHECK INVENTORY DATA
+     */
+
+    if(
+        !Array.isArray(inventoryData)
+        ||
+        inventoryData.length === 0
+    ){
+
+        alert(
+            "There are no inventory records to export."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * GET FILTER VALUES
      */
 
     const keyword =
@@ -3255,21 +3296,24 @@ function exportInventoryToExcel(){
         document
         .getElementById("departmentFilter")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
 
 
     const category =
         document
         .getElementById("categoryFilter")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
 
 
     const status =
         document
         .getElementById("statusFilter")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
 
 
     /*
@@ -3279,80 +3323,88 @@ function exportInventoryToExcel(){
     const filteredData =
         inventoryData.filter(asset => {
 
-            const searchableText = `
 
-                ${asset.asset_number || ""}
+            const searchableText = [
 
-                ${asset.asset_name || ""}
+                asset.asset_number,
 
-                ${asset.department || ""}
+                asset.asset_name,
 
-                ${asset.category || ""}
+                asset.department,
 
-                ${asset.brand || ""}
+                asset.category,
 
-                ${asset.model || ""}
+                asset.brand,
 
-                ${asset.serial_number || ""}
+                asset.model,
 
-                ${asset.status || ""}
+                asset.serial_number,
 
-                ${asset.assigned_employee_name || ""}
+                asset.status,
 
-                ${asset.location || ""}
+                asset.assigned_employee_name,
 
-            `.toLowerCase();
+                asset.location
+
+            ]
+            .filter(value => value != null)
+            .join(" ")
+            .toLowerCase();
+
+
+            const matchesSearch =
+                keyword === ""
+                ||
+                searchableText.includes(keyword);
+
+
+            const matchesDepartment =
+                department === ""
+                ||
+                String(asset.department || "")
+                .toLowerCase()
+                === department;
+
+
+            const matchesCategory =
+                category === ""
+                ||
+                String(asset.category || "")
+                .toLowerCase()
+                === category;
+
+
+            const matchesStatus =
+                status === ""
+                ||
+                String(asset.status || "")
+                .toLowerCase()
+                === status;
 
 
             return (
 
-                searchableText.includes(keyword)
-
+                matchesSearch
                 &&
-
-                (
-                    department === ""
-
-                    ||
-
-                    (asset.department || "")
-                    .toLowerCase()
-                    === department
-                )
-
+                matchesDepartment
                 &&
-
-                (
-                    category === ""
-
-                    ||
-
-                    (asset.category || "")
-                    .toLowerCase()
-                    === category
-                )
-
+                matchesCategory
                 &&
-
-                (
-                    status === ""
-
-                    ||
-
-                    (asset.status || "")
-                    .toLowerCase()
-                    === status
-                )
+                matchesStatus
 
             );
 
         });
 
 
+    /*
+     * NO RESULTS
+     */
+
     if(filteredData.length === 0){
 
         alert(
-            "No inventory records match the selected filters."
+            "No inventory records match your selected filters."
         );
 
         return;
@@ -3361,11 +3413,11 @@ function exportInventoryToExcel(){
 
 
     /*
-     * CREATE EXCEL DATA
+     * PREPARE EXCEL DATA
      */
 
     const excelData =
-        filteredData.map((asset, index) => ({
+        filteredData.map((asset,index) => ({
 
             "No.":
 
@@ -3401,7 +3453,7 @@ function exportInventoryToExcel(){
 
             "Quantity":
 
-                asset.quantity || 0,
+                Number(asset.quantity || 0),
 
             "Unit":
 
@@ -3469,53 +3521,32 @@ function exportInventoryToExcel(){
 
 
     /*
-     * SET COLUMN WIDTHS
+     * COLUMN WIDTHS
      */
 
     worksheet["!cols"] = [
 
         {wch:6},
-
         {wch:18},
-
-        {wch:25},
-
+        {wch:28},
         {wch:18},
-
         {wch:18},
-
-        {wch:15},
-
+        {wch:16},
         {wch:18},
-
         {wch:22},
-
         {wch:10},
-
         {wch:12},
-
         {wch:18},
-
+        {wch:28},
+        {wch:22},
+        {wch:15},
+        {wch:16},
         {wch:25},
-
         {wch:20},
-
-        {wch:15},
-
-        {wch:15},
-
-        {wch:25},
-
+        {wch:22},
+        {wch:16},
         {wch:20},
-
-        {wch:20},
-
-        {wch:15},
-
-        {wch:20},
-
         {wch:40},
-
         {wch:40}
 
     ];
@@ -3541,40 +3572,80 @@ function exportInventoryToExcel(){
 
 
     /*
-     * FILE NAME
+     * GENERATE FILE NAME
      */
 
-    const today =
-        new Date()
-        .toISOString()
-        .split("T")[0];
+    const now =
+        new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(
+            now.getMonth() + 1
+        )
+        .padStart(2,"0");
+
+
+    const day =
+        String(
+            now.getDate()
+        )
+        .padStart(2,"0");
 
 
     const fileName =
-        `INTERFREIGHT_Inventory_Report_${today}.xlsx`;
+        `INTERFREIGHT_Inventory_Report_${year}-${month}-${day}.xlsx`;
 
 
     /*
-     * DOWNLOAD
+     * DOWNLOAD EXCEL
      */
 
-    XLSX.writeFile(
+    try{
 
-        workbook,
+        XLSX.writeFile(
+            workbook,
+            fileName
+        );
 
-        fileName
 
-    );
+        console.log(
+            "Excel successfully generated:",
+            fileName
+        );
 
 
-    /*
-     * ACTIVITY LOG
-     */
+        /*
+         * ACTIVITY LOG
+         */
 
-    addActivityLog(
-        `Exported inventory report to Excel (${filteredData.length} records)`
-    );
+        if(typeof addActivityLog === "function"){
 
+            addActivityLog(
+                `Exported inventory report to Excel (${filteredData.length} records)`
+            );
+
+        }
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Excel export error:",
+            error
+        );
+
+
+        alert(
+            "Unable to generate Excel file. Please check the browser console."
+        );
+
+    }
 
 }
 

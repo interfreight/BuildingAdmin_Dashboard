@@ -276,7 +276,19 @@ color:var(--primary);
 margin-bottom:20px;
 
 }
+.btn-excel{
 
+    background:#198754;
+
+    color:white;
+
+}
+
+.btn-excel:hover{
+
+    background:#146c43;
+
+}
 
 
 /* ===========================
@@ -932,6 +944,14 @@ Add Asset
 
 </button>
 
+<button 
+class="btn btn-excel"
+id="exportExcelBtn">
+
+<i class="fa-solid fa-file-excel"></i>
+Export Excel
+
+</button>
 
 </div>
 <div class="table-container">
@@ -3196,7 +3216,367 @@ modal.style.display="none";
 
 };
 
+/********************************************
+ EXPORT INVENTORY TO EXCEL
+********************************************/
 
+document
+.getElementById("exportExcelBtn")
+.addEventListener(
+    "click",
+    exportInventoryToExcel
+);
+
+
+function exportInventoryToExcel(){
+
+    if(!inventoryData || inventoryData.length === 0){
+
+        alert("There are no inventory records to export.");
+
+        return;
+
+    }
+
+
+    /*
+     * GET CURRENT FILTER VALUES
+     */
+
+    const keyword =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const department =
+        document
+        .getElementById("departmentFilter")
+        .value
+        .toLowerCase();
+
+
+    const category =
+        document
+        .getElementById("categoryFilter")
+        .value
+        .toLowerCase();
+
+
+    const status =
+        document
+        .getElementById("statusFilter")
+        .value
+        .toLowerCase();
+
+
+    /*
+     * FILTER INVENTORY
+     */
+
+    const filteredData =
+        inventoryData.filter(asset => {
+
+            const searchableText = `
+
+                ${asset.asset_number || ""}
+
+                ${asset.asset_name || ""}
+
+                ${asset.department || ""}
+
+                ${asset.category || ""}
+
+                ${asset.brand || ""}
+
+                ${asset.model || ""}
+
+                ${asset.serial_number || ""}
+
+                ${asset.status || ""}
+
+                ${asset.assigned_employee_name || ""}
+
+                ${asset.location || ""}
+
+            `.toLowerCase();
+
+
+            return (
+
+                searchableText.includes(keyword)
+
+                &&
+
+                (
+                    department === ""
+
+                    ||
+
+                    (asset.department || "")
+                    .toLowerCase()
+                    === department
+                )
+
+                &&
+
+                (
+                    category === ""
+
+                    ||
+
+                    (asset.category || "")
+                    .toLowerCase()
+                    === category
+                )
+
+                &&
+
+                (
+                    status === ""
+
+                    ||
+
+                    (asset.status || "")
+                    .toLowerCase()
+                    === status
+                )
+
+            );
+
+        });
+
+
+    if(filteredData.length === 0){
+
+        alert(
+            "No inventory records match the selected filters."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * CREATE EXCEL DATA
+     */
+
+    const excelData =
+        filteredData.map((asset, index) => ({
+
+            "No.":
+
+                index + 1,
+
+            "Asset Number":
+
+                asset.asset_number || "",
+
+            "Asset Name":
+
+                asset.asset_name || "",
+
+            "Department":
+
+                asset.department || "",
+
+            "Category":
+
+                asset.category || "",
+
+            "Brand":
+
+                asset.brand || "",
+
+            "Model":
+
+                asset.model || "",
+
+            "Serial Number":
+
+                asset.serial_number || "",
+
+            "Quantity":
+
+                asset.quantity || 0,
+
+            "Unit":
+
+                asset.unit || "",
+
+            "Status":
+
+                asset.status || "",
+
+            "Assigned Employee":
+
+                asset.assigned_employee_name || "",
+
+            "Location":
+
+                asset.location || "",
+
+            "Purchase Date":
+
+                asset.purchase_date || "",
+
+            "Purchase Cost":
+
+                asset.purchase_cost || "",
+
+            "Supplier":
+
+                asset.supplier || "",
+
+            "Invoice Number":
+
+                asset.invoice_number || "",
+
+            "Warranty Expiration":
+
+                asset.warranty_expiration || "",
+
+            "Date Assigned":
+
+                asset.date_assigned || "",
+
+            "Expected Return":
+
+                asset.expected_return || "",
+
+            "Description":
+
+                asset.description || "",
+
+            "Remarks":
+
+                asset.remarks || ""
+
+        }));
+
+
+    /*
+     * CREATE WORKSHEET
+     */
+
+    const worksheet =
+        XLSX.utils.json_to_sheet(
+            excelData
+        );
+
+
+    /*
+     * SET COLUMN WIDTHS
+     */
+
+    worksheet["!cols"] = [
+
+        {wch:6},
+
+        {wch:18},
+
+        {wch:25},
+
+        {wch:18},
+
+        {wch:18},
+
+        {wch:15},
+
+        {wch:18},
+
+        {wch:22},
+
+        {wch:10},
+
+        {wch:12},
+
+        {wch:18},
+
+        {wch:25},
+
+        {wch:20},
+
+        {wch:15},
+
+        {wch:15},
+
+        {wch:25},
+
+        {wch:20},
+
+        {wch:20},
+
+        {wch:15},
+
+        {wch:20},
+
+        {wch:40},
+
+        {wch:40}
+
+    ];
+
+
+    /*
+     * CREATE WORKBOOK
+     */
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+
+        workbook,
+
+        worksheet,
+
+        "Inventory"
+
+    );
+
+
+    /*
+     * FILE NAME
+     */
+
+    const today =
+        new Date()
+        .toISOString()
+        .split("T")[0];
+
+
+    const fileName =
+        `INTERFREIGHT_Inventory_Report_${today}.xlsx`;
+
+
+    /*
+     * DOWNLOAD
+     */
+
+    XLSX.writeFile(
+
+        workbook,
+
+        fileName
+
+    );
+
+
+    /*
+     * ACTIVITY LOG
+     */
+
+    addActivityLog(
+        `Exported inventory report to Excel (${filteredData.length} records)`
+    );
+
+
+}
 
 
 </script>

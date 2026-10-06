@@ -559,7 +559,9 @@ background:#6c757d;
 
 }
 
-
+.sold{
+    background:#8e44ad;
+}
 
 /* ===========================
 MODAL
@@ -924,14 +926,13 @@ placeholder="Search asset...">
 
 
 <select id="statusFilter">
-
-<option value="">All Status</option>
-<option>Available</option>
-<option>Assigned</option>
-<option>Under Repair</option>
-<option>Lost</option>
-<option>Retired</option>
-
+    <option value="">All Status</option>
+    <option>Available</option>
+    <option>Assigned</option>
+    <option>Under Repair</option>
+    <option>Lost</option>
+    <option>Retired</option>
+    <option>Sold</option>
 </select>
 
 
@@ -1185,13 +1186,12 @@ Add Asset
 <label>Status</label>
 
 <select id="status">
-
-<option>Available</option>
-<option>Assigned</option>
-<option>Under Repair</option>
-<option>Lost</option>
-<option>Retired</option>
-
+    <option>Available</option>
+    <option>Assigned</option>
+    <option>Under Repair</option>
+    <option>Lost</option>
+    <option>Retired</option>
+    <option>Sold</option>
 </select>
 
 </div>
@@ -1674,7 +1674,13 @@ statusClass="retired";
 
 break;
 
+        
+case "Sold":
 
+    statusClass="sold";
+
+    break;
+        
 }
 
 
